@@ -1,0 +1,32 @@
+version: "3"
+services:
+  mysql_service:
+    container_name: mysql_service
+    build:
+      context: .
+      dockerfile: ./db/Dockerfile
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: psw123
+      MYSQL_DATABASE: product_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 666
+    command: ['mysqld', '--default-authentication-plugin=mysql_native_password']
+    ports:
+      - "6603:3306"
+    networks:
+      - mynetwork
+  api_service:
+    container_name: api_service
+    build:
+      context: .
+      dockerfile: ./db_api/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql_service
+    networks:
+      - mynetwork
+networks:
+  mynetwork:
+    driver: bridge
